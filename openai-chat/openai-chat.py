@@ -3,14 +3,10 @@ from dotenv import dotenv_values, find_dotenv
 import os
 import typer
 
-CONFIG_FILE = 'env_path.txt'
-
 app = typer.Typer()
 
+
 def send_question(key: str, question: str):
-    if not key:
-        print('You must first run env command to ask OpenAI questions.')
-        return None
     try:
         client = OpenAI(api_key=key)
         ans = client.chat.completions.create(
@@ -22,37 +18,23 @@ def send_question(key: str, question: str):
         print(f'Could not connect to get the answer from OpenAI:\n{e}')
         return None
     
+
 def get_api_key():
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r') as file:
-            path = file.read().strip()
-            return dotenv_values(path)["OPENAI_API_KEY"]
-        
-    else:
-        print('You must first run env command to be able to ask OpenAI questions.')
-        return None
-
-
-@app.command()
-def env(path: str):
-    # Check file path and environment variable are valid
     try:
-        dotenv_path = find_dotenv(path)
-
-        if not dotenv_path:
+        if not os.path.isfile('.env'):
             raise Exception
-    
-        _ = dotenv_values(path)["OPENAI_API_KEY"]
-
-    except KeyError as e:
-        print('Please define the environment variable OPENAI_API_KEY in your .env file and try again.')
         
-    except Exception as e:
-        print('Did not find .env file. Please check the path you enterd.')
+        key = dotenv_values()["OPENAI_API_KEY"]
 
-    # Save path to text file
-    with open(CONFIG_FILE, 'w') as file:
-        file.write(path)
+    except KeyError:
+        print('Please define the environment variable OPENAI_API_KEY in your .env file and try again.')
+        return None
+    
+    except Exception:
+        print('Did not find .env file.')
+        return None
+    
+    return key
 
 
 @app.command()
