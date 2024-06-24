@@ -66,5 +66,8 @@ def chat():
             print(f'[red]{ans.choices[0].message.content}[/red]')
             inp = input()
 
-if __name__ == "__main__":
+def main():
     app()
+
+if __name__ == "__main__":
+    main()
