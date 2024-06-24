@@ -1,5 +1,6 @@
+from dotenv import dotenv_values
 from openai import OpenAI, OpenAIError
-from dotenv import dotenv_values, find_dotenv
+from rich import print
 import os
 import typer
 
@@ -55,7 +56,7 @@ def chat():
             ans = send_question(key, inp)
             if not ans:
                 break
-            print(ans.choices[0].message.content)
+            print(f'[red]{ans.choices[0].message.content}[/red]')
             inp = input()
 
 if __name__ == "__main__":
