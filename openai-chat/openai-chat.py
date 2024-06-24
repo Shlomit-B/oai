@@ -1,6 +1,7 @@
 from dotenv import dotenv_values
 from openai import OpenAI, OpenAIError
 from rich import print
+from rich.progress import Progress, SpinnerColumn, TextColumn
 import os
 import typer
 
@@ -53,7 +54,13 @@ def chat():
     if key:
         inp = input('You can message ChatGPT now. When you finish, type "exit".\n')
         while (inp != 'exit'):
-            ans = send_question(key, inp)
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[green]Processing..."),
+                transient=True
+                ) as progress:
+                progress.add_task(description="send question")
+                ans = send_question(key, inp)
             if not ans:
                 break
             print(f'[red]{ans.choices[0].message.content}[/red]')
